@@ -72,7 +72,6 @@ struct ContentView: View {
                     }
                     .scaleEffect(buttonScale)
                     .buttonStyle(PressedButtonStyle()) // Add this line
-
                 }
 
                 Spacer()
