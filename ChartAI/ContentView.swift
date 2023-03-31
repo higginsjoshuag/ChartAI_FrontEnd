@@ -45,6 +45,8 @@ struct ContentView: View {
     @State private var buttonScale: CGFloat = 1.0
     @StateObject private var playbackManager = AudioPlaybackManager()
     @State private var timerSubscription: AnyCancellable?
+    @State private var showSuccessAlert = false
+
 
     var body: some View {
         ZStack {
@@ -105,6 +107,13 @@ struct ContentView: View {
                     .buttonStyle(PressedButtonStyle()) // Add this line
                 }
             }
+        }
+        .alert(isPresented: $showSuccessAlert) {
+            Alert(
+                title: Text("Success"),
+                message: Text("Your recording has been successfully uploaded."),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 
@@ -208,7 +217,11 @@ struct ContentView: View {
 
             if let data = data, let responseString = String(data: data, encoding: .utf8) {
                 print("Upload response: \(responseString)")
+                DispatchQueue.main.async {
+                    self.showSuccessAlert = true
+                }
             }
         }.resume()
+
     }
 }
