@@ -9,7 +9,6 @@ class AudioPlaybackManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     func playRecording(url: URL) {
         guard !isPlaying else { return }
-
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.delegate = self
@@ -47,15 +46,12 @@ struct ContentView: View {
     @State private var timerSubscription: AnyCancellable?
     @State private var showSuccessAlert = false
 
-
     var body: some View {
         ZStack {
             Color(red: 21/255, green: 32/255, blue: 43/255) // ChatGPT Dark Mode Background Color
                 .edgesIgnoringSafeArea(.all)
-
             VStack {
                 Spacer()
-
                 VStack {
                     Button(action: {
                         if self.isRecording {
@@ -73,9 +69,7 @@ struct ContentView: View {
                     .scaleEffect(buttonScale)
                     .buttonStyle(PressedButtonStyle()) // Add this line
                 }
-
                 Spacer()
-
                 HStack {
                     Button(action: {
                         if self.playbackManager.isPlaying {
@@ -115,19 +109,16 @@ struct ContentView: View {
             )
         }
     }
-
     
     func startRecording() {
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let audioURL = documentPath.appendingPathComponent("recording.m4a")
-        
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-        
         do {
             audioRecorder = try AVAudioRecorder(url: audioURL, settings: settings)
             audioRecorder?.prepareToRecord()
@@ -135,7 +126,6 @@ struct ContentView: View {
         } catch {
             print("Failed to set up the audio recorder: \(error.localizedDescription)")
         }
-        
         audioRecorder?.record()
         isRecording = true
         startTimer()
@@ -161,16 +151,13 @@ struct ContentView: View {
     
     func updateButtonScale() {
         guard let recorder = audioRecorder, isRecording else { return }
-
         recorder.updateMeters()
         let power = recorder.averagePower(forChannel: 0)
         let level = meterLevel(forPower: power)
-        
         withAnimation(.linear(duration: 0.1)) {
             buttonScale = 0.8 + (level * 1.5) // Increase the multiplier to make the animation more dramatic
         }
     }
-
 
     func meterLevel(forPower power: Float) -> CGFloat {
         return CGFloat(min(max(0, (power + 160) / 160), 1))
@@ -188,16 +175,11 @@ struct ContentView: View {
     
     func uploadRecording() {
         guard let audioRecorder = audioRecorder else { return }
-
-        // Prepare the audio data as multipart/form-data payload
         let audioData = try? Data(contentsOf: audioRecorder.url)
         let boundary = UUID().uuidString
-        
-    
         var request = URLRequest(url: URL(string: "https://chartai.herokuapp.com/chartAi/upload_audio/")!)
         request.httpMethod = "POST"
         request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        
         var body = Data()
         body.append("--\(boundary)\r\n".data(using: .utf8)!)
         body.append("Content-Disposition: form-data; name=\"body\"; filename=\"recording.m4a\"\r\n".data(using: .utf8)!)
@@ -205,15 +187,12 @@ struct ContentView: View {
         body.append(audioData ?? Data())
         body.append("\r\n".data(using: .utf8)!)
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-        
         request.httpBody = body
-
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 print("Error uploading recording: \(error.localizedDescription)")
                 return
             }
-
             if let data = data, let responseString = String(data: data, encoding: .utf8) {
                 print("Upload response: \(responseString)")
                 DispatchQueue.main.async {
@@ -221,6 +200,5 @@ struct ContentView: View {
                 }
             }
         }.resume()
-
     }
 }
