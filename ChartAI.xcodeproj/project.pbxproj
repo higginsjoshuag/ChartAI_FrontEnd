@@ -11,6 +11,7 @@
 		33A5CF8529D2369D00AD71B3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A5CF8429D2369D00AD71B3 /* ContentView.swift */; };
 		33A5CF8729D2369E00AD71B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33A5CF8629D2369E00AD71B3 /* Assets.xcassets */; };
 		33A5CF8A29D2369E00AD71B3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33A5CF8929D2369E00AD71B3 /* Preview Assets.xcassets */; };
+		33A5CF9129D23EC400AD71B3 /* AudioPlaybackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A5CF9029D23EC400AD71B3 /* AudioPlaybackManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		33A5CF8429D2369D00AD71B3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		33A5CF8629D2369E00AD71B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		33A5CF8929D2369E00AD71B3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		33A5CF9029D23EC400AD71B3 /* AudioPlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 		33A5CF8129D2369D00AD71B3 /* ChartAI */ = {
 			isa = PBXGroup;
 			children = (
+				33A5CF9029D23EC400AD71B3 /* AudioPlaybackManager.swift */,
 				33A5CF8229D2369D00AD71B3 /* ChartAIApp.swift */,
 				33A5CF8429D2369D00AD71B3 /* ContentView.swift */,
 				33A5CF8629D2369E00AD71B3 /* Assets.xcassets */,
@@ -139,6 +142,7 @@
 			files = (
 				33A5CF8529D2369D00AD71B3 /* ContentView.swift in Sources */,
 				33A5CF8329D2369D00AD71B3 /* ChartAIApp.swift in Sources */,
+				33A5CF9129D23EC400AD71B3 /* AudioPlaybackManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +271,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ChartAI/Preview Content\"";
+				DEVELOPMENT_TEAM = ZF36T44BY4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -295,6 +300,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ChartAI/Preview Content\"";
+				DEVELOPMENT_TEAM = ZF36T44BY4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
