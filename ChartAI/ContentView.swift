@@ -105,13 +105,6 @@ struct ContentView: View {
                 }
             }
         }
-        .onAppear {
-            testDjangoBackendConnection { success in
-                DispatchQueue.main.async {
-                    isConnectedToDjangoBackend = success
-                }
-            }
-        }
         .alert(isPresented: $showSuccessAlert) {
             Alert(
                 title: Text("Success"),
@@ -184,22 +177,22 @@ struct ContentView: View {
         playbackManager.stopPlayback()
     }
     
-    
     func uploadRecording() {
         guard let audioRecorder = audioRecorder else { return }
-        let audioData = try? Data(contentsOf: audioRecorder.url)
-        let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "http://127.0.0.1:8000/chartAi/upload_audio/")!)
-        request.httpMethod = "POST"
-        request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        var body = Data()
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"body\"; filename=\"recording.m4a\"\r\n".data(using: .utf8)!)
-        body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
-        body.append(audioData ?? Data())
-        body.append("\r\n".data(using: .utf8)!)
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-        request.httpBody = body
+            let audioData = try? Data(contentsOf: audioRecorder.url)
+            let boundary = UUID().uuidString
+            var request = URLRequest(url: URL(string: "http://192.168.253.49:8000/chartAi/upload_audio/")!)
+            request.httpMethod = "POST"
+            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            var body = Data()
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"audio\"; filename=\"recording.mp3\"\r\n".data(using: .utf8)!)
+            body.append("Content-Type: audio/m4a\r\n\r\n".data(using: .utf8)!)
+            body.append(audioData ?? Data())
+            body.append("\r\n".data(using: .utf8)!)
+            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+            request.httpBody = body
+            request.addValue("\(body.count)", forHTTPHeaderField: "Content-Length")
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 print("Error uploading recording: \(error.localizedDescription)")
@@ -213,32 +206,4 @@ struct ContentView: View {
             }
         }.resume()
     }
-    
-    func testDjangoBackendConnection(completion: @escaping (Bool) -> Void) {
-        let url = URL(string: "http://192.168.253.49:8000/test_connection/")!
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error connecting to Django back-end: \(error.localizedDescription)")
-                completion(false)
-                return
-            }
-            if let data = data {
-                do {
-                    if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                       let status = jsonResponse["status"] as? String {
-                        completion(status == "success")
-                    } else {
-                        completion(false)
-                    }
-                } catch {
-                    print("Error parsing JSON response: \(error.localizedDescription)")
-                    completion(false)
-                }
-            } else {
-                completion(false)
-            }
-        }
-        task.resume()
-    }
-
 }
