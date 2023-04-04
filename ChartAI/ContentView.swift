@@ -2,6 +2,8 @@ import SwiftUI
 import AVFoundation
 import Combine
 import Foundation
+import AVKit
+
 
 class AudioPlaybackManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var isPlaying = false
@@ -45,6 +47,8 @@ struct ContentView: View {
     @StateObject private var playbackManager = AudioPlaybackManager()
     @State private var timerSubscription: AnyCancellable?
     @State private var showSuccessAlert = false
+    @State private var isConnectedToDjangoBackend = false
+
 
     var body: some View {
         ZStack {
@@ -96,8 +100,15 @@ struct ContentView: View {
                             .background(Color(red: 30/255, green: 144/255, blue: 255/255)) // Light Blue
                             .cornerRadius(10)
                     }
-                    .disabled(isRecording || !playbackManager.isPlaying)
+                    .disabled(isRecording || playbackManager.isPlaying)
                     .buttonStyle(PressedButtonStyle()) // Add this line
+                }
+            }
+        }
+        .onAppear {
+            testDjangoBackendConnection { success in
+                DispatchQueue.main.async {
+                    isConnectedToDjangoBackend = success
                 }
             }
         }
@@ -173,11 +184,12 @@ struct ContentView: View {
         playbackManager.stopPlayback()
     }
     
+    
     func uploadRecording() {
         guard let audioRecorder = audioRecorder else { return }
         let audioData = try? Data(contentsOf: audioRecorder.url)
         let boundary = UUID().uuidString
-        var request = URLRequest(url: URL(string: "https://chartai.herokuapp.com/chartAi/upload_audio/")!)
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:8000/chartAi/upload_audio/")!)
         request.httpMethod = "POST"
         request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         var body = Data()
@@ -201,4 +213,32 @@ struct ContentView: View {
             }
         }.resume()
     }
+    
+    func testDjangoBackendConnection(completion: @escaping (Bool) -> Void) {
+        let url = URL(string: "http://192.168.253.49:8000/test_connection/")!
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error connecting to Django back-end: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            if let data = data {
+                do {
+                    if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                       let status = jsonResponse["status"] as? String {
+                        completion(status == "success")
+                    } else {
+                        completion(false)
+                    }
+                } catch {
+                    print("Error parsing JSON response: \(error.localizedDescription)")
+                    completion(false)
+                }
+            } else {
+                completion(false)
+            }
+        }
+        task.resume()
+    }
+
 }
