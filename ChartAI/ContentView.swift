@@ -181,7 +181,7 @@ struct ContentView: View {
         guard let audioRecorder = audioRecorder else { return }
             let audioData = try? Data(contentsOf: audioRecorder.url)
             let boundary = UUID().uuidString
-            var request = URLRequest(url: URL(string: "http://192.168.253.49:8000/chartAi/upload_audio/")!)
+            var request = URLRequest(url: URL(string: "http://127.0.0.1:8000/audio/create/")!)
             request.httpMethod = "POST"
             request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             var body = Data()
